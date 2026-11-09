@@ -16,9 +16,12 @@
 
 平台：Kaggle 免费双 Tesla T4（30 小时/周）。主成果是 **FLUX.1-dev 的 Q8 GGUF 量化版双卡并行出图**：一张卡一个独立管线，一趟出 2 张 1024×1024，墙钟 234–264 秒/对（约 117–132 秒/张），同会话单卡 243.5 秒/张 → 产能约 2.08×。
 
-两条可运行路线（都在 [`image/`](image/) 里，细节和全部实测数据见 [image/README.md](image/README.md)）：
+2026-11-09 起，批量出图默认改用**常驻版** `flux-q8-persistent.ipynb`：worker 常驻显存、模型只加载一次、全部提示词一次编码，同口径实测约 **210 秒/批（约 3.5 分钟）**，比每批新进程的旧版快约三成（详见 [image/README.md](image/README.md) 常驻版一节）。
 
-- **下载路线（推荐）** `flux-q8-dual-hf.ipynb`：权重开跑后从 Hugging Face 现下，全程约 44–90 秒备齐
+可运行路线（都在 [`image/`](image/) 里，细节和全部实测数据见 [image/README.md](image/README.md)）：
+
+- **常驻版（批量默认）** `flux-q8-persistent.ipynb`：下载路线的批量进化版
+- **下载路线** `flux-q8-dual-hf.ipynb`：权重开跑后从 Hugging Face 现下，全程约 44–90 秒备齐；每批新进程，现作后备
 - **数据集路线** `flux-q8-dual.ipynb`：挂载预置数据集、整包拷本地后加载；搬运慢，只在额度敏感时有意义
 
 此前还实测过：SDXL base 双卡（1024×1024，34.7 秒）、FLUX 全精度 FP16/BF16、GGUF Q4_K_S 等，数据同样汇总在 [image/README.md](image/README.md)。
